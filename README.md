@@ -16,6 +16,11 @@ A ideia ainda é meio simploria teremos duas VPCs e elas vão conversar uma com 
 
 Mas colocando um pouco de complexidade, teremos uma comunicação entre redes diferentes sendo auxiliada por duas Routers Tables. Confia, vai dar bom. 
 
+# TO DOs 
+
+- Deixar as subnets em uma AZ mesma AZ quando fizerem parte do mesmo tipo (pública ou privada)
+- Replicar uma VPC sem a necessidade de copiar e colar o código 
+- Adicionar o Peering entre VPC A e VPC B (entende-se como sucesso o final disso.)
 
 ## A divisão de Pastas - Não menos importante 
 
@@ -86,3 +91,28 @@ resource "aws_subnet" "my_subnet" {
 }
 
 ``` 
+
+## Alguns passos depois... 
+
+Chegamos em um ponto em que é possível se ver nessa arquitetura de rede, temos algo simples, porém funcional. 
+
+Utilizando-se da melhor forma de looping que o terraform e o chatgpt podem oferecer. 
+
+Agora o grande passo é: 
+
+## Como vou criar a mesma estrutura de Rede com apenas mudanças de parametros? 
+
+Essa é a grande questão para quem está começando e criando uma arquitetura relativamente (pequena) grande. Problema esse agora que pode ser feito da mesma forma que foi resolvidos os outros. 
+
+Aqui só não podemos nos acostumar com lixeira, por favor. Queremos um código limpo e funcional. 
+
+![alt text](image.png)
+
+Imagem do pequeno sucesso. 
+
+
+
+## Como referenciar?
+
+
+## 
