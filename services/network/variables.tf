@@ -4,6 +4,30 @@ variable "cidr_block_vpc_a" {
   default     = "10.0.0.0/16"
 }
 
+variable "cidr_block_vpc_b" {
+  description = "Valor do cidr_block."
+  type        = string
+  default     = "10.1.0.0/16"
+}
+
+variable "vpc_cidr_blocks_list" {
+  type = map(object({
+    prefix_vpc = string
+    cidr_block = string
+  }))
+
+  default = {
+    "vpc_a" = {
+      prefix_vpc = "A"
+      cidr_block = "10.0.0.0/16"
+    }
+    "vpc_b" = {
+      prefix_vpc = "B"
+      cidr_block = "10.1.0.0/16"
+    }
+  }
+}
+
 variable "A_subnets_public_vpc_a" {
   type = map(object({
     cidr_block = string
@@ -41,5 +65,3 @@ variable "A_subnets_private_vpc_a" {
     }
   }
 }
-
-
