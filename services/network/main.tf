@@ -185,3 +185,23 @@ output "vpc_a" {
   value = aws_vpc.vpc_a.id
 
 }
+
+output "vpc_b" {
+  value = aws_vpc.vpc_b.id
+  
+}
+
+output "subnet_private_a" {
+  value = aws_subnet.private_subnet_a_1.id
+  
+}
+
+output "subnet_private_b" {
+  value = aws_subnet.private_subnet_b_1.id
+  
+}
+
+output "subnet_public_a" {
+  value = aws_subnet.public_subnet_a_1.id
+  
+}
