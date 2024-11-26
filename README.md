@@ -17,7 +17,8 @@ A ideia ainda é meio simploria teremos duas VPCs e elas vão conversar uma com 
 Mas colocando um pouco de complexidade, teremos uma comunicação entre redes diferentes sendo auxiliada por duas Routers Tables. Confia, vai dar bom. 
 
 # TO DOs 
-- Deixar as subnets em uma AZ mesma AZ quando fizerem parte do mesmo tipo (pública ou privada)
+- Verificar a questão de conexão entre a máquina Pública e a Máquina Privada A -> Mauqina Privada B 
+- 
 
 ## A divisão de Pastas - Não menos importante 
 
@@ -30,112 +31,30 @@ Veja como faço minha distribuição:
 ```shell
 .
 ├── images
+│   ├── diagram_network.png
 │   └── image.png
 ├── main.tf
 ├── README.md
-└── services
-    ├── instance
-    │   └── main.tf
-    └── network
-        ├── main.tf
-        └── output.tf
+├── services
+│   ├── instance
+│   │   ├── main.tf
+│   │   └── variables.tf
+│   └── network
+│       ├── main.tf
+│       ├── output.tf
+│       ├── subnets.tf
+│       └── variables.tf
+└── variables.tf
 
-4 directories, 6 files
+4 directories, 11 files
 ```
-
-Ainda estou entendendo como funciona a parte de modularização, então tempo ao tempo. 
-
-To-Do! 
-
-- Entender melhor como organizar o código no output.tf (preciso dar sentido pra isso depois, por isso o to-do)
-
-![alt text](./images/diagram_network.png)
-
 
 ## Diagrama do Terraform 
 
-Veja que lindezas o Terraform pode extrair. 
+Acredito que essa 
 
+![alt text](./images/diagram_network.png)
 
-``` 
-digraph G {
-  rankdir = "RL";
-  node [shape = rect, fontname = "sans-serif"];
-  subgraph "cluster_module.instace.module.network" {
-    label = "module.instace.module.network"
-    fontname = "sans-serif"
-    "module.instace.module.network.aws_internet_gateway.igw_a" [label="aws_internet_gateway.igw_a"];
-    "module.instace.module.network.aws_internet_gateway.igw_b" [label="aws_internet_gateway.igw_b"];
-    "module.instace.module.network.aws_route.a_route_igw" [label="aws_route.a_route_igw"];
-    "module.instace.module.network.aws_route.b_route_igw" [label="aws_route.b_route_igw"];
-    "module.instace.module.network.aws_route.route_vpc_a_to_vpc_b" [label="aws_route.route_vpc_a_to_vpc_b"];
-    "module.instace.module.network.aws_route.route_vpc_b_to_vpc_b" [label="aws_route.route_vpc_b_to_vpc_b"];
-    "module.instace.module.network.aws_route_table.a_rtb-private" [label="aws_route_table.a_rtb-private"];
-    "module.instace.module.network.aws_route_table.a_rtb-public" [label="aws_route_table.a_rtb-public"];
-    "module.instace.module.network.aws_route_table.b_rtb_private" [label="aws_route_table.b_rtb_private"];
-    "module.instace.module.network.aws_route_table.b_rtb_public" [label="aws_route_table.b_rtb_public"];
-    "module.instace.module.network.aws_route_table_association.a_rtb_private_assoc" [label="aws_route_table_association.a_rtb_private_assoc"];
-    "module.instace.module.network.aws_route_table_association.a_rtb_public_assoc" [label="aws_route_table_association.a_rtb_public_assoc"];
-    "module.instace.module.network.aws_route_table_association.b_rtb_private_assoc" [label="aws_route_table_association.b_rtb_private_assoc"];
-    "module.instace.module.network.aws_route_table_association.b_rtb_public_assoc" [label="aws_route_table_association.b_rtb_public_assoc"];
-    "module.instace.module.network.aws_subnet.private_subnet_a_1" [label="aws_subnet.private_subnet_a_1"];
-    "module.instace.module.network.aws_subnet.private_subnet_a_2" [label="aws_subnet.private_subnet_a_2"];
-    "module.instace.module.network.aws_subnet.private_subnet_b_1" [label="aws_subnet.private_subnet_b_1"];
-    "module.instace.module.network.aws_subnet.private_subnet_b_2" [label="aws_subnet.private_subnet_b_2"];
-    "module.instace.module.network.aws_subnet.public_subnet_a_1" [label="aws_subnet.public_subnet_a_1"];
-    "module.instace.module.network.aws_subnet.public_subnet_a_2" [label="aws_subnet.public_subnet_a_2"];
-    "module.instace.module.network.aws_subnet.public_subnet_b_1" [label="aws_subnet.public_subnet_b_1"];
-    "module.instace.module.network.aws_subnet.public_subnet_b_2" [label="aws_subnet.public_subnet_b_2"];
-    "module.instace.module.network.aws_vpc.vpc_a" [label="aws_vpc.vpc_a"];
-    "module.instace.module.network.aws_vpc.vpc_b" [label="aws_vpc.vpc_b"];
-    "module.instace.module.network.aws_vpc_endpoint.vpc_a_s3_endpoint" [label="aws_vpc_endpoint.vpc_a_s3_endpoint"];
-    "module.instace.module.network.aws_vpc_endpoint.vpc_b_s3_endpoint" [label="aws_vpc_endpoint.vpc_b_s3_endpoint"];
-    "module.instace.module.network.aws_vpc_peering_connection.peer_vpc_a_to_vpc_b" [label="aws_vpc_peering_connection.peer_vpc_a_to_vpc_b"];
-  }
-  "module.instace.module.network.aws_internet_gateway.igw_a" -> "module.instace.module.network.aws_vpc.vpc_a";
-  "module.instace.module.network.aws_internet_gateway.igw_b" -> "module.instace.module.network.aws_vpc.vpc_b";
-  "module.instace.module.network.aws_route.a_route_igw" -> "module.instace.module.network.aws_internet_gateway.igw_a";
-  "module.instace.module.network.aws_route.a_route_igw" -> "module.instace.module.network.aws_route_table.a_rtb-public";
-  "module.instace.module.network.aws_route.b_route_igw" -> "module.instace.module.network.aws_internet_gateway.igw_b";
-  "module.instace.module.network.aws_route.b_route_igw" -> "module.instace.module.network.aws_route_table.b_rtb_public";
-  "module.instace.module.network.aws_route.route_vpc_a_to_vpc_b" -> "module.instace.module.network.aws_route_table.a_rtb-private";
-  "module.instace.module.network.aws_route.route_vpc_a_to_vpc_b" -> "module.instace.module.network.aws_vpc_peering_connection.peer_vpc_a_to_vpc_b";
-  "module.instace.module.network.aws_route.route_vpc_b_to_vpc_b" -> "module.instace.module.network.aws_route_table.b_rtb_private";
-  "module.instace.module.network.aws_route.route_vpc_b_to_vpc_b" -> "module.instace.module.network.aws_vpc_peering_connection.peer_vpc_a_to_vpc_b";
-  "module.instace.module.network.aws_route_table.a_rtb-private" -> "module.instace.module.network.aws_vpc.vpc_a";
-  "module.instace.module.network.aws_route_table.a_rtb-public" -> "module.instace.module.network.aws_vpc.vpc_a";
-  "module.instace.module.network.aws_route_table.b_rtb_private" -> "module.instace.module.network.aws_vpc.vpc_b";
-  "module.instace.module.network.aws_route_table.b_rtb_public" -> "module.instace.module.network.aws_vpc.vpc_b";
-  "module.instace.module.network.aws_route_table_association.a_rtb_private_assoc" -> "module.instace.module.network.aws_route_table.a_rtb-private";
-  "module.instace.module.network.aws_route_table_association.a_rtb_private_assoc" -> "module.instace.module.network.aws_subnet.private_subnet_a_1";
-  "module.instace.module.network.aws_route_table_association.a_rtb_private_assoc" -> "module.instace.module.network.aws_subnet.private_subnet_a_2";
-  "module.instace.module.network.aws_route_table_association.a_rtb_public_assoc" -> "module.instace.module.network.aws_route_table.a_rtb-public";
-  "module.instace.module.network.aws_route_table_association.a_rtb_public_assoc" -> "module.instace.module.network.aws_subnet.public_subnet_a_1";
-  "module.instace.module.network.aws_route_table_association.a_rtb_public_assoc" -> "module.instace.module.network.aws_subnet.public_subnet_a_2";
-  "module.instace.module.network.aws_route_table_association.b_rtb_private_assoc" -> "module.instace.module.network.aws_route_table.b_rtb_private";
-  "module.instace.module.network.aws_route_table_association.b_rtb_private_assoc" -> "module.instace.module.network.aws_subnet.private_subnet_b_1";
-  "module.instace.module.network.aws_route_table_association.b_rtb_private_assoc" -> "module.instace.module.network.aws_subnet.private_subnet_b_2";
-  "module.instace.module.network.aws_route_table_association.b_rtb_public_assoc" -> "module.instace.module.network.aws_route_table.b_rtb_public";
-  "module.instace.module.network.aws_route_table_association.b_rtb_public_assoc" -> "module.instace.module.network.aws_subnet.public_subnet_b_1";
-  "module.instace.module.network.aws_route_table_association.b_rtb_public_assoc" -> "module.instace.module.network.aws_subnet.public_subnet_b_2";
-  "module.instace.module.network.aws_subnet.private_subnet_a_1" -> "module.instace.module.network.aws_vpc.vpc_a";
-  "module.instace.module.network.aws_subnet.private_subnet_a_2" -> "module.instace.module.network.aws_vpc.vpc_a";
-  "module.instace.module.network.aws_subnet.private_subnet_b_1" -> "module.instace.module.network.aws_vpc.vpc_b";
-  "module.instace.module.network.aws_subnet.private_subnet_b_2" -> "module.instace.module.network.aws_vpc.vpc_b";
-  "module.instace.module.network.aws_subnet.public_subnet_a_1" -> "module.instace.module.network.aws_vpc.vpc_a";
-  "module.instace.module.network.aws_subnet.public_subnet_a_2" -> "module.instace.module.network.aws_vpc.vpc_a";
-  "module.instace.module.network.aws_subnet.public_subnet_b_1" -> "module.instace.module.network.aws_vpc.vpc_b";
-  "module.instace.module.network.aws_subnet.public_subnet_b_2" -> "module.instace.module.network.aws_vpc.vpc_b";
-  "module.instace.module.network.aws_vpc_endpoint.vpc_a_s3_endpoint" -> "module.instace.module.network.aws_route_table.a_rtb-private";
-  "module.instace.module.network.aws_vpc_endpoint.vpc_b_s3_endpoint" -> "module.instace.module.network.aws_route_table.b_rtb_private";
-  "module.instace.module.network.aws_vpc_peering_connection.peer_vpc_a_to_vpc_b" -> "module.instace.module.network.aws_vpc.vpc_a";
-  "module.instace.module.network.aws_vpc_peering_connection.peer_vpc_a_to_vpc_b" -> "module.instace.module.network.aws_vpc.vpc_b";
-}
-```
-
-
-
-Vou inserir depois com o terraform graph mesmo achando feio pra cacete
 
 
 ## Coisas Importantes que foram aprendidas 
